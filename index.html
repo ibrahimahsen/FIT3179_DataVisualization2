@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Australian Bushfires — FIT3179 Data Visualisation 2</title>
+
+  <!-- Vega libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+  <link rel="stylesheet" href="styles.css" />
+  <script src="vegalite_vs.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Australian Bushfires</h1>
+    <p class="subtitle">2016–2021 overview and the 2019–20 season</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>1) Unplanned fires by state — pick a year</h2>
+      <div id="choropleth" class="chart left"></div>
+      <p class="note">Tip: use the selector to switch the year (2016–17 to 2020–21).</p>
+    </section>
+
+    <section>
+      <h2>2) Planned vs Unplanned — all years or a specific year</h2>
+      <div id="bar" class="chart right"></div>
+    </section>
+
+    <section>
+      <h2>3) VIIRS hotspots — 2019–20 season snapshot</h2>
+      <div id="hotspots" class="chart left"></div>
+      <p class="note">To keep this fast, the dataset is filtered/sampled. Colour shows year or confidence.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>34223118</p>
+  </footer>
+</body>
+</html>
