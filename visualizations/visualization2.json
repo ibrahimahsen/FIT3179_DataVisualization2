@@ -1,0 +1,67 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "VIIRS Fire Activity — Sep 2019 to Jan 2020 (binned by ~20 km)",
+  "width": 650,
+  "height": 520,
+  "projection": {"type": "equirectangular"},
+  "params": [
+    {
+      "name": "m",
+      "value": "2019-09",
+      "bind": {
+        "input": "select",
+        "name": "Year-Month: ",
+        "options": ["2019-09", "2019-10", "2019-11", "2019-12", "2020-01"]
+      }
+    }
+  ],
+  "layer": [
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/main/data/aus_states.topojson",
+        "format": {"type": "topojson", "feature": "aus_states"}
+      },
+      "mark": {"type": "geoshape", "fill": "#f8f8f8", "stroke": "#ccc"}
+    },
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/refs/heads/main/data/firms_viirs_au_BS2019_2020_grid.csv"
+      },
+      "transform": [{"filter": "datum.month == m"}],
+      "mark": {"type": "circle", "opacity": 0.75},
+      "encoding": {
+        "longitude": {"field": "lon_bin", "type": "quantitative"},
+        "latitude": {"field": "lat_bin", "type": "quantitative"},
+        "size": {
+          "field": "count",
+          "type": "quantitative",
+          "title": "Detections (per cell)"
+        },
+        "color": {
+          "field": "h_share",
+          "type": "quantitative",
+          "title": "High Confidence Share",
+          "scale": {"domain": [0, 1], "range": ["#fee0d2", "#de2d26"]}
+        },
+        "tooltip": [
+          {"field": "month", "title": "Month"},
+          {"field": "count", "type": "quantitative", "title": "Fire Count"},
+          {
+            "field": "mean_frp",
+            "type": "quantitative",
+            "title": "Avg FRP",
+            "format": "~r"
+          },
+          {
+            "field": "h_share",
+            "type": "quantitative",
+            "title": "High Confidence Share",
+            "format": ".0%"
+          },
+          {"field": "count", "title": "No. of detections"}
+        ]
+      }
+    }
+  ],
+  "config": {}
+}

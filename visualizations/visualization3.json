@@ -1,0 +1,86 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Planned vs Unplanned Fires (toggle All years or pick a year)",
+  "width": 600,
+  "height": 200,
+  "data": {
+    "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/refs/heads/main/data/state_burn_flags_by_state_2016_2021.csv"
+  },
+  "params": [
+    {
+      "name": "allYears",
+      "value": true,
+      "bind": {"input": "checkbox", "name": "Show all years (sum): "}
+    },
+    {
+      "name": "yrNum",
+      "value": 2019,
+      "bind": {
+        "input": "range",
+        "min": 2017,
+        "max": 2021,
+        "step": 1,
+        "name": "Select end year: "
+      }
+    }
+  ],
+  "transform": [
+    {
+      "fold": [
+        "U_1617",
+        "U_1718",
+        "U_1819",
+        "U_1920",
+        "U_2021",
+        "P_1617",
+        "P_1718",
+        "P_1819",
+        "P_1920",
+        "P_2021"
+      ],
+      "as": ["key", "count"]
+    },
+    {
+      "calculate": "slice(datum.key, 0, 2) == 'U_' ? 'Unplanned' : 'Planned'",
+      "as": "type"
+    },
+    {"calculate": "2000 + toNumber(slice(datum.key, 4, 6))", "as": "yearNum"},
+    {"filter": "allYears || datum.yearNum == yrNum"}
+  ],
+  "mark": {"type": "bar", "cornerRadiusEnd": 1},
+  "encoding": {
+    "y": {
+      "field": "type",
+      "type": "nominal",
+      "axis": {"title": null},
+      "sort": "-x"
+    },
+    "x": {
+      "aggregate": "sum",
+      "field": "count",
+      "type": "quantitative",
+      "title": "Fire count"
+    },
+    "color": {
+      "field": "type",
+      "type": "nominal",
+      "scale": {"range": ["#1f77b4", "#e6550d"]},
+      "legend": {"title": null}
+    },
+    "tooltip": [
+      {
+        "aggregate": "sum",
+        "field": "count",
+        "type": "quantitative",
+        "title": "Count"
+      },
+      {
+        "field": "yearNum",
+        "type": "ordinal",
+        "title": "Year (end)",
+        "aggregate": "max"
+      }
+    ]
+  },
+  "config": {}
+}
