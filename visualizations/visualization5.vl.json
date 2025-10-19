@@ -1,0 +1,124 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "VIIRS Fire Detections — Confidence Stream (Sep 2019 → Jan 2020)",
+  "width": 820,
+  "height": 380,
+  "data": {
+    "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/main/data/firms_viirs_au_bushfires_2019_2020_sample30k.csv"
+  },
+  "transform": [
+    {"calculate": "toDate(datum.acq_date)", "as": "d"},
+    {"timeUnit": "yearmonth", "field": "d", "as": "ym"},
+    {
+      "filter": "datetime(year(datum.d), month(datum.d)) >= datetime(2019, 8) && datetime(year(datum.d), month(datum.d)) <= datetime(2020, 0)"
+    },
+    {
+      "calculate": "lower(datum.confidence) == 'h' ? 'High' : 'Nominal/Other'",
+      "as": "confGroup"
+    },
+    {
+      "aggregate": [{"op": "count", "as": "detections"}],
+      "groupby": ["ym", "confGroup"]
+    },
+    {"impute": "detections", "groupby": ["confGroup"], "key": "ym", "value": 0},
+    {
+      "joinaggregate": [
+        {"op": "sum", "field": "detections", "as": "monthTotal"}
+      ],
+      "groupby": ["ym"]
+    },
+    {
+      "calculate": "datum.monthTotal == 0 ? 0 : datum.detections / datum.monthTotal",
+      "as": "share"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {"type": "area", "interpolate": "monotone"},
+      "encoding": {
+        "x": {
+          "field": "ym",
+          "type": "temporal",
+          "axis": {"title": null, "format": "%b %Y", "labelAngle": 0}
+        },
+        "y": {
+          "field": "detections",
+          "type": "quantitative",
+          "stack": "center",
+          "title": "Detections"
+        },
+        "color": {
+          "field": "confGroup",
+          "type": "nominal",
+          "scale": {"range": ["#e6550d", "#fee6ce"]},
+          "legend": {"title": "Confidence"}
+        },
+        "order": {
+          "aggregate": "sum",
+          "field": "detections",
+          "sort": "descending"
+        },
+        "tooltip": [
+          {
+            "field": "ym",
+            "type": "temporal",
+            "title": "Month",
+            "format": "%b %Y"
+          },
+          {"field": "confGroup", "title": "Confidence"},
+          {
+            "field": "detections",
+            "type": "quantitative",
+            "title": "Detections",
+            "format": ","
+          },
+          {
+            "field": "monthTotal",
+            "type": "quantitative",
+            "title": "Month total",
+            "format": ","
+          },
+          {
+            "field": "share",
+            "type": "quantitative",
+            "title": "Share",
+            "format": ".0%"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "line",
+        "color": "#444",
+        "opacity": 0.3,
+        "interpolate": "monotone"
+      },
+      "transform": [
+        {
+          "aggregate": [{"op": "max", "field": "monthTotal", "as": "total"}],
+          "groupby": ["ym"]
+        }
+      ],
+      "encoding": {
+        "x": {"field": "ym", "type": "temporal"},
+        "y": {"field": "total", "type": "quantitative"},
+        "tooltip": [
+          {
+            "field": "ym",
+            "type": "temporal",
+            "title": "Month",
+            "format": "%b %Y"
+          },
+          {
+            "field": "total",
+            "type": "quantitative",
+            "title": "Total detections",
+            "format": ","
+          }
+        ]
+      }
+    }
+  ],
+  "config": {}
+}
