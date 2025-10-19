@@ -1,0 +1,97 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "State Trends in Unplanned vs Planned Fires (2016–2021)",
+  "width": 820,
+  "height": 420,
+  "data": {
+    "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/main/data/state_burn_flags_by_state_2016_2021.csv"
+  },
+  "params": [
+    {
+      "name": "kind",
+      "value": "Unplanned",
+      "bind": {
+        "input": "select",
+        "name": "Show: ",
+        "options": ["Unplanned", "Planned"]
+      }
+    },
+    {
+      "name": "stateFocus",
+      "select": {"type": "point", "fields": ["STATE_NAME"]},
+      "bind": "legend"
+    },
+    {
+      "name": "stateHover",
+      "select": {
+        "type": "point",
+        "fields": ["STATE_NAME"],
+        "on": "mouseover",
+        "clear": "mouseout"
+      }
+    }
+  ],
+  "transform": [
+    {
+      "fold": [
+        "U_1617",
+        "U_1718",
+        "U_1819",
+        "U_1920",
+        "U_2021",
+        "P_1617",
+        "P_1718",
+        "P_1819",
+        "P_1920",
+        "P_2021"
+      ],
+      "as": ["key", "count"]
+    },
+    {
+      "calculate": "slice(datum.key,0,2)=='U_'?'Unplanned':'Planned'",
+      "as": "type"
+    },
+    {"calculate": "2000 + toNumber(slice(datum.key,4,6))", "as": "year"},
+    {
+      "calculate": "slice(datum.key,2,4)+'–'+slice(datum.key,4,6)",
+      "as": "yearLabel"
+    },
+    {"filter": "datum.type == kind"}
+  ],
+  "mark": {
+    "type": "line",
+    "interpolate": "monotone",
+    "strokeWidth": 2.2,
+    "point": {"filled": true, "size": 5, "stroke": "black", "strokeWidth": 3.5}
+  },
+  "encoding": {
+    "x": {"field": "year", "type": "ordinal", "axis": {"title": "End year"}},
+    "y": {"field": "count", "type": "quantitative", "title": "Fires"},
+    "color": {
+      "field": "STATE_NAME",
+      "type": "nominal",
+      "legend": {"title": "State", "columns": 2}
+    },
+    "opacity": {
+      "condition": [
+        {"param": "stateFocus", "value": 1},
+        {"param": "stateHover", "value": 1}
+      ],
+      "value": 0.25
+    },
+    "size": {
+      "condition": [
+        {"param": "stateFocus", "value": 3},
+        {"param": "stateHover", "value": 3}
+      ],
+      "value": 1.5
+    },
+    "tooltip": [
+      {"field": "STATE_NAME", "title": "State"},
+      {"field": "yearLabel", "title": "Year span"},
+      {"field": "count", "type": "quantitative", "title": "Count"},
+      {"field": "type", "title": "Mode"}
+    ]
+  },
+  "config": {}
+}
