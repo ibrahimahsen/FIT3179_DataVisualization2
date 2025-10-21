@@ -1,67 +1,71 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "title": "VIIRS Fire Activity — Sep 2019 to Jan 2020 (binned by ~20 km)",
+  "title": "Unplanned bushfires in Australia (2016–2021)",
   "width": 650,
-  "height": 520,
+  "height": 480,
   "projection": {"type": "equirectangular"},
+  "data": {
+    "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/main/data/aus_states.topojson",
+    "format": {"type": "topojson", "feature": "aus_states"}
+  },
   "params": [
     {
-      "name": "m",
-      "value": "2019-09",
+      "name": "yr",
+      "value": "U_1617",
       "bind": {
         "input": "select",
-        "name": "Year-Month: ",
-        "options": ["2019-09", "2019-10", "2019-11", "2019-12", "2020-01"]
+        "name": "Year",
+        "options": ["U_1617", "U_1718", "U_1819", "U_1920", "U_2021"],
+        "labels": ["2016–17", "2017–18", "2018–19", "2019–20", "2020–21"]
       }
     }
   ],
-  "layer": [
+  "transform": [
     {
-      "data": {
-        "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/main/data/aus_states.topojson",
-        "format": {"type": "topojson", "feature": "aus_states"}
-      },
-      "mark": {"type": "geoshape", "fill": "#f8f8f8", "stroke": "#ccc"}
+      "lookup": "properties.STATE_NAME",
+      "from": {
+        "data": {
+          "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/main/data/state_burn_flags_by_state_2016_2021.csv"
+        },
+        "key": "STATE_NAME",
+        "fields": ["U_1617", "U_1718", "U_1819", "U_1920", "U_2021"]
+      }
     },
     {
-      "data": {
-        "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/refs/heads/main/data/firms_viirs_au_BS2019_2020_grid.csv"
-      },
-      "transform": [{"filter": "datum.month == m"}],
-      "mark": {"type": "circle", "opacity": 0.75},
-      "encoding": {
-        "longitude": {"field": "lon_bin", "type": "quantitative"},
-        "latitude": {"field": "lat_bin", "type": "quantitative"},
-        "size": {
-          "field": "count",
-          "type": "quantitative",
-          "title": "Detections (per cell)"
-        },
-        "color": {
-          "field": "h_share",
-          "type": "quantitative",
-          "title": "High Confidence Share",
-          "scale": {"domain": [0, 1], "range": ["#fee0d2", "#de2d26"]}
-        },
-        "tooltip": [
-          {"field": "month", "title": "Month"},
-          {"field": "count", "type": "quantitative", "title": "Fire Count"},
-          {
-            "field": "mean_frp",
-            "type": "quantitative",
-            "title": "Avg FRP",
-            "format": "~r"
-          },
-          {
-            "field": "h_share",
-            "type": "quantitative",
-            "title": "High Confidence Share",
-            "format": ".0%"
-          },
-          {"field": "count", "title": "No. of detections"}
+      "fold": ["U_1617", "U_1718", "U_1819", "U_1920", "U_2021"],
+      "as": ["yearKey", "u"]
+    },
+    {
+      "calculate": "datum.yearKey == 'U_1617' ? '2016–17' : datum.yearKey == 'U_1718' ? '2017–18' : datum.yearKey == 'U_1819' ? '2018–19' : datum.yearKey == 'U_1920' ? '2019–20' : '2020–21'",
+      "as": "yearLabel"
+    },
+    {"filter": "datum.yearKey == yr"},
+    {"calculate": "datum.u", "as": "u_plus"}
+  ],
+  "mark": {"type": "geoshape", "stroke": "white", "strokeWidth": 0.5},
+  "encoding": {
+    "color": {
+      "field": "u_plus",
+      "title": "No. of ocurrences",
+      "type": "quantitative",
+      "scale": {
+        "type": "log",
+        "domain": [1, 100, 500, 1000, 2000, 3000],
+        "range": [
+          "#fee6ce",
+          "#fdae6b",
+          "#fd8d3c",
+          "#e6550d",
+          "#a63603",
+          "#7f2704"
         ]
       }
-    }
-  ],
+    },
+    "tooltip": [
+      {"field": "properties.STATE_NAME", "title": "State"},
+      {"field": "yearLabel", "title": "Year"},
+      {"field": "u_plus", "type": "quantitative", "title": "Burn count"}
+    ]
+  },
   "config": {}
 }

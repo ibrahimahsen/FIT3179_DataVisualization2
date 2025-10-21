@@ -1,71 +1,124 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "title": "Unplanned bushfires in Australia (2016–2021)",
-  "width": 650,
-  "height": 480,
-  "projection": {"type": "equirectangular"},
+  "title": "VIIRS Fire Detections — Confidence Stream (Sep 2019 → Jan 2020)",
+  "width": 820,
+  "height": 380,
   "data": {
-    "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/main/data/aus_states.topojson",
-    "format": {"type": "topojson", "feature": "aus_states"}
+    "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/main/data/firms_viirs_au_bushfires_2019_2020_sample30k.csv"
   },
-  "params": [
+  "transform": [
+    {"calculate": "toDate(datum.acq_date)", "as": "d"},
+    {"timeUnit": "yearmonth", "field": "d", "as": "ym"},
     {
-      "name": "yr",
-      "value": "U_1617",
-      "bind": {
-        "input": "select",
-        "name": "Year",
-        "options": ["U_1617", "U_1718", "U_1819", "U_1920", "U_2021"],
-        "labels": ["2016–17", "2017–18", "2018–19", "2019–20", "2020–21"]
-      }
+      "filter": "datetime(year(datum.d), month(datum.d)) >= datetime(2019, 8) && datetime(year(datum.d), month(datum.d)) <= datetime(2020, 0)"
+    },
+    {
+      "calculate": "lower(datum.confidence) == 'h' ? 'High' : 'Nominal/Other'",
+      "as": "confGroup"
+    },
+    {
+      "aggregate": [{"op": "count", "as": "detections"}],
+      "groupby": ["ym", "confGroup"]
+    },
+    {"impute": "detections", "groupby": ["confGroup"], "key": "ym", "value": 0},
+    {
+      "joinaggregate": [
+        {"op": "sum", "field": "detections", "as": "monthTotal"}
+      ],
+      "groupby": ["ym"]
+    },
+    {
+      "calculate": "datum.monthTotal == 0 ? 0 : datum.detections / datum.monthTotal",
+      "as": "share"
     }
   ],
-  "transform": [
+  "layer": [
     {
-      "lookup": "properties.STATE_NAME",
-      "from": {
-        "data": {
-          "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/main/data/state_burn_flags_by_state_2016_2021.csv"
+      "mark": {"type": "area", "interpolate": "monotone"},
+      "encoding": {
+        "x": {
+          "field": "ym",
+          "type": "temporal",
+          "axis": {"title": null, "format": "%b %Y", "labelAngle": 0}
         },
-        "key": "STATE_NAME",
-        "fields": ["U_1617", "U_1718", "U_1819", "U_1920", "U_2021"]
-      }
-    },
-    {
-      "fold": ["U_1617", "U_1718", "U_1819", "U_1920", "U_2021"],
-      "as": ["yearKey", "u"]
-    },
-    {
-      "calculate": "datum.yearKey == 'U_1617' ? '2016–17' : datum.yearKey == 'U_1718' ? '2017–18' : datum.yearKey == 'U_1819' ? '2018–19' : datum.yearKey == 'U_1920' ? '2019–20' : '2020–21'",
-      "as": "yearLabel"
-    },
-    {"filter": "datum.yearKey == yr"},
-    {"calculate": "datum.u", "as": "u_plus"}
-  ],
-  "mark": {"type": "geoshape", "stroke": "white", "strokeWidth": 0.5},
-  "encoding": {
-    "color": {
-      "field": "u_plus",
-      "title": "No. of ocurrences",
-      "type": "quantitative",
-      "scale": {
-        "type": "log",
-        "domain": [1, 100, 500, 1000, 2000, 3000],
-        "range": [
-          "#fee6ce",
-          "#fdae6b",
-          "#fd8d3c",
-          "#e6550d",
-          "#a63603",
-          "#7f2704"
+        "y": {
+          "field": "detections",
+          "type": "quantitative",
+          "stack": "center",
+          "title": "Detections"
+        },
+        "color": {
+          "field": "confGroup",
+          "type": "nominal",
+          "scale": {"range": ["#e6550d", "#fee6ce"]},
+          "legend": {"title": "Confidence"}
+        },
+        "order": {
+          "aggregate": "sum",
+          "field": "detections",
+          "sort": "descending"
+        },
+        "tooltip": [
+          {
+            "field": "ym",
+            "type": "temporal",
+            "title": "Month",
+            "format": "%b %Y"
+          },
+          {"field": "confGroup", "title": "Confidence"},
+          {
+            "field": "detections",
+            "type": "quantitative",
+            "title": "Detections",
+            "format": ","
+          },
+          {
+            "field": "monthTotal",
+            "type": "quantitative",
+            "title": "Month total",
+            "format": ","
+          },
+          {
+            "field": "share",
+            "type": "quantitative",
+            "title": "Share",
+            "format": ".0%"
+          }
         ]
       }
     },
-    "tooltip": [
-      {"field": "properties.STATE_NAME", "title": "State"},
-      {"field": "yearLabel", "title": "Year"},
-      {"field": "u_plus", "type": "quantitative", "title": "Burn count"}
-    ]
-  },
+    {
+      "mark": {
+        "type": "line",
+        "color": "#444",
+        "opacity": 0.3,
+        "interpolate": "monotone"
+      },
+      "transform": [
+        {
+          "aggregate": [{"op": "max", "field": "monthTotal", "as": "total"}],
+          "groupby": ["ym"]
+        }
+      ],
+      "encoding": {
+        "x": {"field": "ym", "type": "temporal"},
+        "y": {"field": "total", "type": "quantitative"},
+        "tooltip": [
+          {
+            "field": "ym",
+            "type": "temporal",
+            "title": "Month",
+            "format": "%b %Y"
+          },
+          {
+            "field": "total",
+            "type": "quantitative",
+            "title": "Total detections",
+            "format": ","
+          }
+        ]
+      }
+    }
+  ],
   "config": {}
 }

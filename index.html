@@ -1,56 +1,150 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Australian Bushfires — FIT3179 Data Visualisation 2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Australia Bushfires — Visual Overview</title>
+  <meta name="description" content="Five concise visualizations of the 2019–20 Australian bushfires." />
 
-  <!-- Vega libraries -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="page-header">
+    <div class="container">
+      <h1 class="site-title">Australia Bushfires</h1>
+      <p class="site-subtitle">Five key views</p>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section">
+      <div class="container narrow">
+        <h2 class="section-title">Overview</h2>
+        <p class="lead">
+          QWERTY
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Timeline</h2>
+        <p class="section-desc">Monthly detections by confidence category.</p>
+
+        <figure class="figure align-center">
+          <div id="v1" class="vis-slot" aria-label="Timeline visualization"></div>
+        </figure>
+
+        <div class="text-block" style="max-width: 70ch; margin: .8rem auto 0;">
+          <h3>What the timeline shows</h3>
+          <p>Peak detections cluster in late spring and early summer. Differences between confidence categories reflect detection thresholds and environmental conditions.</p>
+          <p class="muted">Note: Cloud cover and orbital timing can depress monthly counts.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Geography</h2>
+        <p class="section-desc">Spatial distribution of detections across Australia.</p>
+
+        <div class="vis-row two-col">
+          <figure class="figure tight align-left">
+            <div id="v2" class="vis-slot" aria-label="Geographic visualization"></div>
+            <figcaption class="caption">
+              Hotspots correspond to known high-risk regions; projection and scale indicated in the spec.
+            </figcaption>
+          </figure>
+
+          <div class="text-block">
+            <h3>Spatial context</h3>
+            <p>Detections concentrate in historically high-risk regions. Local weather and fuel load influence the apparent density.</p>
+            <p class="muted">Tip: Check legend/scales on the map for interpretation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">States & Territories</h2>
+        <p class="section-desc">Comparative detections by region and month.</p>
+
+        <figure class="figure align-right">
+          <div id="v3" class="vis-slot" aria-label="State comparison visualization"></div>
+          <figcaption class="caption">
+            Aggregations are monthly; use caution with absolute counts due to cloud/orbit gaps.
+          </figcaption>
+        </figure>
+
+        <div class="text-block" style="max-width: 70ch; margin: .8rem 0 0 auto;">
+          <h3>Regional comparison</h3>
+          <p>Differences between states/territories highlight exposure and seasonal drivers. Compare relative changes rather than raw totals.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Confidence Breakdown</h2>
+        <p class="section-desc">Share of low/nominal/high detections across the period.</p>
+
+        <div class="vis-row two-col">
+          <figure class="figure tight align-center">
+            <div id="v4" class="vis-slot" aria-label="Confidence breakdown visualization"></div>
+            <figcaption class="caption">
+              Color mapping remains consistent across all charts.
+            </figcaption>
+          </figure>
+
+          <div class="text-block">
+            <h3>Interpreting confidence</h3>
+            <p>Confidence categories reflect sensor thresholds and algorithms. Proportions help compare periods with very different totals.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Daily Patterns</h2>
+        <p class="section-desc">Day-level intensity (heatmap/calendar) during peaks.</p>
+
+        <div class="vis-row two-col swap">
+          <div class="text-block">
+            <h3>Within-month variability</h3>
+            <p>Day-to-day volatility often corresponds with heat, wind, and lightning events. Clusters indicate persistent conditions.</p>
+            <p class="muted">Scale bins are equal day windows for clarity.</p>
+          </div>
+
+          <figure class="figure tight align-right">
+            <div id="v5" class="vis-slot" aria-label="Daily pattern visualization"></div>
+            <figcaption class="caption">
+              Higher density indicates more detections; bins reflect equal day windows.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    <div class="container">
+      <small>© <span id="year"></span> Australia Bushfires</small>
+    </div>
+  </footer>
+
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 
-  <link rel="stylesheet" href="styles.css" />
-  <script src="vegalite_vs.js" defer></script>
-</head>
-<body>
-  <header>
-    <h1>Australian Bushfires</h1>
-    <p class="subtitle">2016–2021 overview and the 2019–20 season</p>
-  </header>
+  <script src="vegalite_vs.js"></script>
 
-  <main>
-    <section>
-      <h2>1) Unplanned fires by state — pick a year</h2>
-      <div id="choropleth" class="chart left"></div>
-      <p class="note">Tip: use the selector to switch the year (2016–17 to 2020–21).</p>
-    </section>
-
-    <section>
-      <h2>2) Planned vs Unplanned — all years or a specific year</h2>
-      <div id="bar" class="chart right"></div>
-    </section>
-
-    <section>
-      <h2>3) VIIRS hotspots — 2019–20 season snapshot</h2>
-      <div id="hotspots" class="chart left"></div>
-      <p class="note">To keep this fast, the dataset is filtered/sampled. Colour shows year or confidence.</p>
-    </section>
-
-    <section>
-      <h2>4) Line Chart</h2>
-      <div id="line" class="chart left"></div>
-      <p class="note">To keep this fast, the dataset is filtered/sampled. Colour shows year or confidence.</p>
-    </section>
-
-    <section>
-      <h2>5) Steam Graph</h2>
-      <div id="steam" class="chart left"></div>
-      <p class="note">To keep this fast, the dataset is filtered/sampled. Colour shows year or confidence.</p>
-    </section>
-  </main>
-
-  <footer>
-    <p>34223118</p>
-  </footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
-</html> 
+</html>

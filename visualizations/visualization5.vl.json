@@ -1,121 +1,64 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "title": "VIIRS Fire Detections — Confidence Stream (Sep 2019 → Jan 2020)",
-  "width": 820,
-  "height": 380,
-  "data": {
-    "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/main/data/firms_viirs_au_bushfires_2019_2020_sample30k.csv"
-  },
-  "transform": [
-    {"calculate": "toDate(datum.acq_date)", "as": "d"},
-    {"timeUnit": "yearmonth", "field": "d", "as": "ym"},
+  "title": "VIIRS Fire Activity — Sep 2019 to Jan 2020 (binned by ~20 km)",
+  "width": 650,
+  "height": 520,
+  "projection": {"type": "equirectangular"},
+  "params": [
     {
-      "filter": "datetime(year(datum.d), month(datum.d)) >= datetime(2019, 8) && datetime(year(datum.d), month(datum.d)) <= datetime(2020, 0)"
-    },
-    {
-      "calculate": "lower(datum.confidence) == 'h' ? 'High' : 'Nominal/Other'",
-      "as": "confGroup"
-    },
-    {
-      "aggregate": [{"op": "count", "as": "detections"}],
-      "groupby": ["ym", "confGroup"]
-    },
-    {"impute": "detections", "groupby": ["confGroup"], "key": "ym", "value": 0},
-    {
-      "joinaggregate": [
-        {"op": "sum", "field": "detections", "as": "monthTotal"}
-      ],
-      "groupby": ["ym"]
-    },
-    {
-      "calculate": "datum.monthTotal == 0 ? 0 : datum.detections / datum.monthTotal",
-      "as": "share"
+      "name": "m",
+      "value": "2019-09",
+      "bind": {
+        "input": "select",
+        "name": "Year-Month: ",
+        "options": ["2019-09", "2019-10", "2019-11", "2019-12", "2020-01"]
+      }
     }
   ],
   "layer": [
     {
-      "mark": {"type": "area", "interpolate": "monotone"},
-      "encoding": {
-        "x": {
-          "field": "ym",
-          "type": "temporal",
-          "axis": {"title": null, "format": "%b %Y", "labelAngle": 0}
-        },
-        "y": {
-          "field": "detections",
-          "type": "quantitative",
-          "stack": "center",
-          "title": "Detections"
-        },
-        "color": {
-          "field": "confGroup",
-          "type": "nominal",
-          "scale": {"range": ["#e6550d", "#fee6ce"]},
-          "legend": {"title": "Confidence"}
-        },
-        "order": {
-          "aggregate": "sum",
-          "field": "detections",
-          "sort": "descending"
-        },
-        "tooltip": [
-          {
-            "field": "ym",
-            "type": "temporal",
-            "title": "Month",
-            "format": "%b %Y"
-          },
-          {"field": "confGroup", "title": "Confidence"},
-          {
-            "field": "detections",
-            "type": "quantitative",
-            "title": "Detections",
-            "format": ","
-          },
-          {
-            "field": "monthTotal",
-            "type": "quantitative",
-            "title": "Month total",
-            "format": ","
-          },
-          {
-            "field": "share",
-            "type": "quantitative",
-            "title": "Share",
-            "format": ".0%"
-          }
-        ]
-      }
+      "data": {
+        "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/main/data/aus_states.topojson",
+        "format": {"type": "topojson", "feature": "aus_states"}
+      },
+      "mark": {"type": "geoshape", "fill": "#f8f8f8", "stroke": "#ccc"}
     },
     {
-      "mark": {
-        "type": "line",
-        "color": "#444",
-        "opacity": 0.3,
-        "interpolate": "monotone"
+      "data": {
+        "url": "https://raw.githubusercontent.com/ibrahimahsen/FIT3179_DataVisualization2/refs/heads/main/data/firms_viirs_au_BS2019_2020_grid.csv"
       },
-      "transform": [
-        {
-          "aggregate": [{"op": "max", "field": "monthTotal", "as": "total"}],
-          "groupby": ["ym"]
-        }
-      ],
+      "transform": [{"filter": "datum.month == m"}],
+      "mark": {"type": "circle", "opacity": 0.75},
       "encoding": {
-        "x": {"field": "ym", "type": "temporal"},
-        "y": {"field": "total", "type": "quantitative"},
+        "longitude": {"field": "lon_bin", "type": "quantitative"},
+        "latitude": {"field": "lat_bin", "type": "quantitative"},
+        "size": {
+          "field": "count",
+          "type": "quantitative",
+          "title": "Detections (per cell)"
+        },
+        "color": {
+          "field": "h_share",
+          "type": "quantitative",
+          "title": "High Confidence Share",
+          "scale": {"domain": [0, 1], "range": ["#fee0d2", "#de2d26"]}
+        },
         "tooltip": [
+          {"field": "month", "title": "Month"},
+          {"field": "count", "type": "quantitative", "title": "Fire Count"},
           {
-            "field": "ym",
-            "type": "temporal",
-            "title": "Month",
-            "format": "%b %Y"
+            "field": "mean_frp",
+            "type": "quantitative",
+            "title": "Avg FRP",
+            "format": "~r"
           },
           {
-            "field": "total",
+            "field": "h_share",
             "type": "quantitative",
-            "title": "Total detections",
-            "format": ","
-          }
+            "title": "High Confidence Share",
+            "format": ".0%"
+          },
+          {"field": "count", "title": "No. of detections"}
         ]
       }
     }
