@@ -14,8 +14,10 @@
 <body>
   <header class="page-header">
     <div class="container">
-      <h1 class="site-title">Australia Bushfires</h1>
-      <p class="site-subtitle">Five key views</p>
+      <h1 class="site-title">Australia's Bushfires: From Control to Catastrophe</h1>
+      <p class="site-subtitle">A data-driven exploration of bushfire activity across Australia (2016-2021), highlighting
+        the shift from planned burns to widespread unplanned infernos that ultimately culminated in the Black Summer of 2019-2020.
+      </p>
     </div>
   </header>
 
@@ -24,45 +26,42 @@
       <div class="container narrow">
         <h2 class="section-title">Overview</h2>
         <p class="lead">
-          QWERTY
+        Controlled burning is one of Australia's most important land management tools. It reduces fuel loads,
+        protects habitats, and prevents larger fires. However, over the years 2016-2021, the balance between
+        planned and unplanned fires changed dramatically. This story visualises that shift across
+        multiple dimensions: spatial, temporal, and intensity, with an increased focus on the build-up to the 
+        Black Summer period of September 2019 to January 2020, using accurate data reports and figures.
         </p>
       </div>
     </section>
 
     <section class="section">
       <div class="container">
-        <h2 class="section-title">Timeline</h2>
-        <p class="section-desc">Monthly detections by confidence category.</p>
-
-        <figure class="figure align-center">
-          <div id="v1" class="vis-slot" aria-label="Timeline visualization"></div>
-        </figure>
-
-        <div class="text-block" style="max-width: 70ch; margin: .8rem auto 0;">
-          <h3>What the timeline shows</h3>
-          <p>Peak detections cluster in late spring and early summer. Differences between confidence categories reflect detection thresholds and environmental conditions.</p>
-          <p class="muted">Note: Cloud cover and orbital timing can depress monthly counts.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <h2 class="section-title">Geography</h2>
-        <p class="section-desc">Spatial distribution of detections across Australia.</p>
+        <h2 class="section-title">1) Where Unplanned Fires Burned the Most</h2>
+        <p class="section-desc">Spatial distribution of burns across Australia.</p>
 
         <div class="vis-row two-col">
           <figure class="figure tight align-left">
-            <div id="v2" class="vis-slot" aria-label="Geographic visualization"></div>
+            <div id="v2" class="vis-slot has-filters" aria-label="Geographic visualization"></div>
             <figcaption class="caption">
-              Hotspots correspond to known high-risk regions; projection and scale indicated in the spec.
+              This choropleth map highlights the distribution of <b>unplanned fires</b> across Australian
+              states from 2016-2021. Use the dropdown to explore the different years that showcase varying
+              levels of bushfire activity.  
             </figcaption>
           </figure>
 
           <div class="text-block">
-            <h3>Spatial context</h3>
-            <p>Detections concentrate in historically high-risk regions. Local weather and fuel load influence the apparent density.</p>
-            <p class="muted">Tip: Check legend/scales on the map for interpretation.</p>
+            <p>As can be ascertained from the visualization, states like Queensland and Northern Territory
+              have also been prone to hosting unplanned bushfires, at a number much more than other Australian
+              states. As expected, around the period 2019-20, both Queensland and Northern Territory experienced
+              an increase in unplanned bushfires, along with New South Wales and Victoria reaching numbers they had 
+              never reached before.
+            </p>
+            <p>
+              Regions of Australia with arid interiors have always burned more in the summertime, yet, the recordings
+              during and leading up to the Black Summer revealed how rising temperatures and dry fuel loads brought bushfire
+              risk closer to the populated communities of Australia.
+            </p>
           </div>
         </div>
       </div>
@@ -70,63 +69,146 @@
 
     <section class="section">
       <div class="container">
-        <h2 class="section-title">States & Territories</h2>
-        <p class="section-desc">Comparative detections by region and month.</p>
+        <h2 class="section-title">2) Planned vs Unplanned Fires: Changing Balance</h2>
+        <p class="section-desc">Comparison of bushfire kind across different years.</p>
+
+        <div class="vis-row two-col">
+          <figure class="figure tight align-center">
+            <div id="v4" class="vis-slot has-filters" aria-label="Donut chart"></div>
+            <figcaption class="caption">
+              This interactive donut chart compares the proportion of <b>planned</b> and <b>unplanned</b>
+              fires across Australia. Drag the slider to switch between years. The last option (2022) is
+              a stand-in for the combined data representation of all years. 
+            </figcaption>
+          </figure>
+
+          <div class="text-block">
+            <p>Australia's strategy once revolved around planned bushfires - delibrate, low-intensity fires to 
+              manage fuel loads and prevent catastrophic burnings. As conditions worsened however, unplanned 
+              bushfires began to dominate. Observing from 2018 to 2019, we see a change in the number of unplanned
+              bushfires / total bushfires from 48% to 54%. This then increases to 58% in 2020, clearly visualizing
+              the increase.
+            </p>
+            <p>
+              This shift in the share of unplanned bushfires in total bushfires signals how climate change managed to
+              outpace traditional control methods, decreasing the effective of prevention when it was most needed. 
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">3) State-by-State Trends in Unplanned and Planned Fires </h2>
+        <p class="section-desc">Line chart showchasing bushfire trends for each Australian state</p>
 
         <figure class="figure align-right">
           <div id="v3" class="vis-slot" aria-label="State comparison visualization"></div>
           <figcaption class="caption">
-            Aggregations are monthly; use caution with absolute counts due to cloud/orbit gaps.
+            Each line represents an Australian state, tracking the total number of bushfires from 2016-2021.
+            Switch between <b>Unplanned</b> and <b>Planned</b> fires to see how management efforts contrasted
+            with uncontrolled events. 
           </figcaption>
         </figure>
 
-        <div class="text-block" style="max-width: 70ch; margin: .8rem 0 0 auto;">
-          <h3>Regional comparison</h3>
-          <p>Differences between states/territories highlight exposure and seasonal drivers. Compare relative changes rather than raw totals.</p>
+        <div class="text-block" style="max-width: 70ch; margin: .8rem auto 0;">
+          <p>In the Northern states, unplanned bushfire numbers have occupied most of Australia's
+             unplanned bushfires. As the trend can be observed from the beginning of 2019, both Northern
+             states recorded an increase in unplanned bushfires and therefore, a decreased in planned ones.
+             A surprise was the rapid increase of unplanned bushfires in the South-East of Australia, notably
+             New South Wales and Victoria, peaking in the window of late 2019 and early 2020.     
+          </p>
+          <p>
+            After the summer period in early 2020, the Australian government's response to the Black Summer 
+            resulted in a decrease in unplanned bushfires across all states with an increase in planned ones, 
+            further limiting the possibility of enduring another Black Summer. 
+          </p>
+          <p>
+            The synchrony across multiple states signified how multiple factors (heat, drought, wind) all came into 
+            play in a way that overwhelmed Australia's fire management resources and bushfire preparations. Since then, 
+            Australia hasn't faced such a catastrophic event, mostly owing to their increased importance on bushfire
+            preparations. 
+          </p>
         </div>
       </div>
     </section>
 
     <section class="section">
       <div class="container">
-        <h2 class="section-title">Confidence Breakdown</h2>
-        <p class="section-desc">Share of low/nominal/high detections across the period.</p>
-
-        <div class="vis-row two-col">
-          <figure class="figure tight align-center">
-            <div id="v4" class="vis-slot" aria-label="Confidence breakdown visualization"></div>
-            <figcaption class="caption">
-              Color mapping remains consistent across all charts.
-            </figcaption>
-          </figure>
-
-          <div class="text-block">
-            <h3>Interpreting confidence</h3>
-            <p>Confidence categories reflect sensor thresholds and algorithms. Proportions help compare periods with very different totals.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <h2 class="section-title">Daily Patterns</h2>
-        <p class="section-desc">Day-level intensity (heatmap/calendar) during peaks.</p>
+        <h2 class="section-title">4) The Black Summer on the Ground</h2>
+        <p class="section-desc">Fire Hotspot Map populated with accurate data from VIIRS</p>
 
         <div class="vis-row two-col swap">
           <div class="text-block">
-            <h3>Within-month variability</h3>
-            <p>Day-to-day volatility often corresponds with heat, wind, and lightning events. Clusters indicate persistent conditions.</p>
-            <p class="muted">Scale bins are equal day windows for clarity.</p>
+            <p>The chart accurately represents the number of occurences of bushfires captured by the VIIRS satellite
+               as well as the reliability of the occurrence. Each point is spread over a 20 km radius which encapsulates
+               all occurrences. The data is modelled from Sep 2019 - Jan 2020. 
+            </p>
+            <p>
+              In the months of September, October and November, the majority of hotspots are observed in the Northern states,
+              with activity increasing in the South-East as the months progress. It's most notable in December that bushfires 
+              progress to an unprecedent rate, especially in the South-East states, a densely populated region that hasn't 
+              experienced bushfires of this magnitude before. The data from January 2020 supports our conclusion that the 
+              Australian government, aided by changing natural parameters, was able to put a stop to the catastrophic burnings
+              and subdue the Black Summer.
+            </p>
           </div>
 
           <figure class="figure tight align-right">
-            <div id="v5" class="vis-slot" aria-label="Daily pattern visualization"></div>
+            <div id="v5" class="vis-slot has-filters" aria-label="HotSpots Chart"></div>
             <figcaption class="caption">
-              Higher density indicates more detections; bins reflect equal day windows.
+              Each point on the map represents a fire detection captured by the VIIRS satellite (detections combined
+              over 20 km per point). Hue indicates the shared confidence rating of each point (higher rating signifies
+              most of the detections were classified as high probability bushfire recordings), and the size of the point
+              is dependent on the number of detections.  
             </figcaption>
           </figure>
         </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">5) Rising Fire Intensity: High Confidence Detections</h2>
+        <p class="section-desc">This steamgraph compares the number of detections classified as High to detections classified
+          as Nominal/Other.
+        </p>
+
+        <figure class="figure align-center">
+          <div id="v1" class="vis-slot" aria-label="Stream Chart"></div>
+          <figcaption class="caption">
+            This graph visualizes <b>VIIRS satellite detections</b> of fire activity by confidence level from 
+            September 2019 to January 2020. Higher confidence corresponds to more intense or clearly visible bushfires.
+          </figcaption>
+        </figure>
+
+        <div class="text-block" style="max-width: 70ch; margin: .8rem auto 0;">
+          <p>The stream chart supports the findings and conclusions of the previous visualizations by modelling
+            the increase in firebush detections from September 2019, with the peak being reached in November 2019.
+            From there, detections decreased, mirroring the rise and fall of the Black Summer.
+          </p>
+          <p>
+            The chart clearly displays the catastrophe that ocurred over the 5 months between September 2019 and 
+            January 2020. Scattered events turned into a nation-wide emergency, with the country facing unprecendented
+            odds. These visualizations serve to enforce the effects of the Black Summer and in general, catastrophic bushfires.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="conclusion">
+      <div class="container">
+        <h2>Conclusion</h2>
+        <p>
+          Between 2016 to 2021, Australia's approach to bushfire management received its greatest test.
+          Planned burns either remained steady or decreased, while unplanned fires surged, culminating in 
+          the Black Summer. These visualizations not only showcase when and where fires burned, but how the 
+          balance between prevention and catastrophe shifted, leaving an indellible mark on the Australian landscape.
+        </p>
+        <small>
+          Created by Muhammad Ibrahim Ahsen - 34223118
+        </small>
       </div>
     </section>
   </main>
@@ -134,6 +216,9 @@
   <footer class="page-footer">
     <div class="container">
       <small>© <span id="year"></span> Australia Bushfires</small>
+      <small>© 2024 Fires in Australia's forests 2016-21 - Australian Government Department of Agriculture, Fisheries and Forestry</small>
+      <small>© Fires from Space: Australia - Kaggle</small>
+
     </div>
   </footer>
 
